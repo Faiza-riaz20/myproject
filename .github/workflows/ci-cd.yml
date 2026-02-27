@@ -1,35 +1,29 @@
-name: Node.js CI/CD Pipeline
+name: Node.js CI - Matrix Build
 
-# Trigger workflow on push to main/develop or pull request to main/develop
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
-    # Pass secrets as environment variables
-    env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      HEROKU_APP_NAME: my-app-name   # Replace with your Heroku app name
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
 
     steps:
       # Step 1: Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js
+      # Step 2: Setup Node.js (Matrix Version)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node-version }}
 
       # Step 3: Install Dependencies
       - name: Install Dependencies
@@ -39,20 +33,6 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      # Step 5: Build Application (placeholder)
+      # Step 5: Build Application
       - name: Build Application
-        run: echo "Build step placeholder (add real build if needed)"
-        
-      # Step 6: Deploy to Heroku
-      - name: Deploy to Heroku
-        run: |
-          echo "Deploying to Heroku..."
-          echo $HEROKU_API_KEY | heroku auth:token
-          git remote add heroku https://git.heroku.com/$HEROKU_APP_NAME.git
-          git push heroku develop:main --force
-        shell: bash
-
-      # Step 7: Notify on Failure
-      - name: Notify on Failure
-        if: failure()
-        run: echo "Workflow Failed! Check GitHub Actions logs for details."
+        run: echo "Build successful on Node.js ${{ matrix.node-version }}"
