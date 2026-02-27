@@ -1,0 +1,25 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Faiza-riaz20/myproject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Faiza-riaz20/myproject/issues"
+  },
+  "homepage": "https://github.com/Faiza-riaz20/myproject#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
