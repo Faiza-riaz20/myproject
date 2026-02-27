@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Node.js CI/CD Pipeline
 
 on:
   push:
@@ -15,9 +15,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-<<<<<<< HEAD
-      - run: echo "Workflow running successfully!"
-=======
-      - run: echo "Workflow is running successfully!"
->>>>>>> 3bc46198f2fda6ae11750ff9ecc7593fd7eacc39
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
