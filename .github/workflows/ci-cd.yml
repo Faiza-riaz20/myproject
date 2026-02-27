@@ -1,13 +1,11 @@
-name: Node.js CI - Matrix Build
+name: Node.js CI/CD with AWS Deployment
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+    branches: [ develop ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,24 +13,34 @@ jobs:
         node-version: [12.x, 14.x, 16.x]
 
     steps:
-      # Step 1: Checkout Repository
+      # Checkout code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js (Matrix Version)
+      # Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Step 3: Install Dependencies
+      # Install dependencies
       - name: Install Dependencies
         run: npm install
 
-      # Step 4: Run Tests
+      # Run tests
       - name: Run Tests
         run: npm test
 
-      # Step 5: Build Application
-      - name: Build Application
-        run: echo "Build successful on Node.js ${{ matrix.node-version }}"
+      # Deploy only once (avoid deploying 3 times)
+      - name: Deploy to AWS EC2
+        if: matrix.node-version == '16.x'
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/myproject
+            git pull origin develop
+            npm install
+            pm2 restart all
